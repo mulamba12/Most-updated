@@ -45,7 +45,7 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         lodging_cost = lodging_days * COSTS["lodging_cost_per_day"]
 
     material_cost = 0
-    additional_costs = {}  # Correct initialization
+    additional_costs = {}
     labor_hours = 0
 
     if job_type == "Sports Courts":
@@ -64,7 +64,7 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
     elif job_type == "Epoxy Flake":
         if options.get("over_quartz"):
             material_cost = (square_footage / COSTS["quartz_coverage"]) * COSTS["quartz_cost_per_bag"]
-            labor_hours = (square_footage / 1750) * 15 / num_workers  # Over Quartz
+            labor_hours = square_footage / (num_workers * 15)  # Over Quartz
         else:  # Over Flake
             if options.get("use_urethane_cement"):
                 material_cost = (square_footage / COSTS["urethane_cement_coverage"]) * COSTS["urethane_cement_cost_per_bag"]
@@ -77,7 +77,7 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
             else:
                 topcoat_cost = (square_footage / COSTS["kinetic_85_coverage"]) * COSTS["kinetic_85_hs_cost_per_10gal"]
             material_cost += topcoat_cost
-            labor_hours = (square_footage / 1750) * 12 / num_workers  # Over Flake
+            labor_hours = square_footage / (num_workers * 25)  # Over Flake
 
     elif job_type == "Polished Concrete":
         grinding_cost = (square_footage / COSTS["grinding_coverage_per_machine"]) * COSTS["grinding_cost_per_machine"]
@@ -85,10 +85,10 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         densifier_cost = (square_footage / COSTS["densifier_coverage"]) * COSTS["densifier_cost_per_5gal"]
         guard_cost = (square_footage / COSTS["guard_sealer_coverage"]) * COSTS["guard_sealer_cost_per_gal"]
         material_cost = grinding_cost + cutting_agent_cost + densifier_cost + guard_cost
-        labor_hours = (square_footage / 750) * 8 / num_workers  # Polished Concrete
+        labor_hours = square_footage / (num_workers * 25)  # Polished Concrete
 
     elif job_type == "Sealed Concrete":
-        labor_hours = (square_footage / 20000) * 8 / num_workers  # Sealed Concrete
+        labor_hours = square_footage / (num_workers * 375)  # Sealed Concrete
 
     elif job_type == "Urethane Cement":
         material_cost = square_footage * COSTS["urethane_cement_standalone_cost_per_sqft"]
@@ -102,6 +102,7 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
 
     return {
         "Material Cost": material_cost,
+        "Labor Hours": round(labor_hours, 2),
         "Labor Cost": labor_cost,
         "Additional Costs": additional_costs,
         "Travel Cost": travel_cost,
