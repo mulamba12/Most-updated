@@ -62,22 +62,25 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
                 additional_costs["Fence"] = options["fence_length"] * COSTS["fence_cost_per_foot"]
 
     elif job_type == "Epoxy Flake":
-        if options.get("over_quartz"):
-            material_cost = (square_footage / COSTS["quartz_coverage"]) * COSTS["quartz_cost_per_bag"]
-            labor_hours = square_footage / (num_workers * 15)  # Over Quartz
-        else:  # Over Flake
-            if options.get("use_urethane_cement"):
-                material_cost = (square_footage / COSTS["urethane_cement_coverage"]) * COSTS["urethane_cement_cost_per_bag"]
-            else:
-                material_cost = (square_footage / COSTS["epoxy_vapor_barrier_coverage"]) * COSTS["epoxy_vapor_barrier_cost_per_gal"]
-            flake_cost = (square_footage / COSTS["flake_coverage"]) * COSTS["flake_cost_per_box"]
-            material_cost += flake_cost
-            if options.get("residential"):
-                topcoat_cost = (square_footage / COSTS["kinetic_85_coverage"]) * COSTS["kinetic_85_ef_cost_per_10gal"]
-            else:
-                topcoat_cost = (square_footage / COSTS["kinetic_85_coverage"]) * COSTS["kinetic_85_hs_cost_per_10gal"]
-            material_cost += topcoat_cost
-            labor_hours = square_footage / (num_workers * 25)  # Over Flake
+    if options.get("over_quartz"):
+        material_cost = (square_footage / COSTS["quartz_coverage"]) * COSTS["quartz_cost_per_bag"]
+        labor_hours = square_footage / (num_workers * 15)  # Over Quartz
+    else:  # Over Flake
+        if options.get("use_urethane_cement"):
+            material_cost = (square_footage / COSTS["urethane_cement_coverage"]) * COSTS["urethane_cement_cost_per_bag"]
+        else:
+            material_cost = (square_footage / COSTS["epoxy_vapor_barrier_coverage"]) * COSTS["epoxy_vapor_barrier_cost_per_gal"]
+        flake_cost = (square_footage / COSTS["flake_coverage"]) * COSTS["flake_cost_per_box"]
+        material_cost += flake_cost
+        if options.get("residential"):
+            # Calculate gallons needed for topcoat
+            gallons_needed = square_footage / COSTS["kinetic_85_coverage"]
+            topcoat_cost = gallons_needed * (COSTS["kinetic_85_ef_cost_per_10gal"] / 10)
+        else:
+            gallons_needed = square_footage / COSTS["kinetic_85_coverage"]
+            topcoat_cost = gallons_needed * (COSTS["kinetic_85_hs_cost_per_10gal"] / 10)
+        material_cost += topcoat_cost
+        labor_hours = square_footage / (num_workers * 25)  # Over Flake
 
     elif job_type == "Polished Concrete":
         grinding_cost = (square_footage / COSTS["grinding_coverage_per_machine"]) * COSTS["grinding_cost_per_machine"]
