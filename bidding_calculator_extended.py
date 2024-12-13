@@ -103,8 +103,15 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
     labor_cost = labor_hours * COSTS["hourly_wage"] * num_workers
     total_additional_costs = sum(additional_costs.values())
     total_cost = material_cost + labor_cost + total_additional_costs + travel_cost + lodging_cost
-    profit = total_cost * (profit_margin / 100)
-    bid_price = total_cost + profit
+    
+    # Revenue (Bid Price) calculation
+    bid_price = total_cost / (1 - (profit_margin / 100))
+    
+    # Net Profit
+    net_profit = bid_price - total_cost
+    
+    # Profit Margin calculation based on the new formula
+    actual_profit_margin = (net_profit / bid_price) * 100
 
     return {
         "Material Cost": material_cost,
@@ -114,9 +121,11 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         "Travel Cost": travel_cost,
         "Lodging Cost": lodging_cost,
         "Total Cost": total_cost,
-        "Profit": profit,
+        "Net Profit": round(net_profit, 2),
         "Bid Price": bid_price,
+        "Profit Margin (%)": round(actual_profit_margin, 2),
     }
+
 
 # Streamlit UI
 st.title("Job Bidding Calculator")
