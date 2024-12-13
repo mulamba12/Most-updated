@@ -45,9 +45,8 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         lodging_cost = lodging_days * COSTS["lodging_cost_per_day"]
 
     material_cost = 0
-    additional_costs = 0
+    additional_costs = {}  # Correct initialization
     labor_hours = 0
-    additional_details = {}
 
     if job_type == "Sports Courts":
         material_cost = square_footage * COSTS["sports_courts_base_cost_per_sqft"]
@@ -96,20 +95,22 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         labor_hours = square_footage / (num_workers * 25)  # Urethane Cement labor
 
     labor_cost = labor_hours * COSTS["hourly_wage"] * num_workers
-    total_cost = material_cost + labor_cost + additional_costs + travel_cost + lodging_cost
+    total_additional_costs = sum(additional_costs.values())
+    total_cost = material_cost + labor_cost + total_additional_costs + travel_cost + lodging_cost
     profit = total_cost * (profit_margin / 100)
     bid_price = total_cost + profit
 
     return {
         "Material Cost": material_cost,
         "Labor Cost": labor_cost,
-        "Additional Costs": additional_details,
+        "Additional Costs": additional_costs,
         "Travel Cost": travel_cost,
         "Lodging Cost": lodging_cost,
         "Total Cost": total_cost,
         "Profit": profit,
         "Bid Price": bid_price,
     }
+
 
 
 # Streamlit UI
