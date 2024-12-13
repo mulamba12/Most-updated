@@ -53,17 +53,14 @@ def calculate_bid(job_type, square_footage, distance, profit_margin, num_workers
         material_cost = square_footage * COSTS["sports_courts_base_cost_per_sqft"]
         if options:
             if options.get("concrete"):
-                additional_costs += square_footage * COSTS["sports_courts_concrete_cost_per_sqft"]
-                additional_details["Concrete"] = additional_costs
+                additional_costs["Concrete"] = square_footage * COSTS["sports_courts_concrete_cost_per_sqft"]
             if options.get("lights"):
-                additional_costs += options["num_courts"] * COSTS["light_cost_per_pair"]
-                additional_details["Lights"] = additional_costs
+                additional_costs["Lights"] = options["num_courts"] * COSTS["light_cost_per_pair"]
             if options.get("hoops"):
-                additional_costs += options["num_courts"] * COSTS["hoop_cost_each"]
-                additional_details["Hoops"] = additional_costs
+                num_hoops = options.get("num_hoops", 1)  # Default to 1 hoop if not specified
+                additional_costs["Hoop" if num_hoops == 1 else "Hoops"] = num_hoops * COSTS["hoop_cost_each"]
             if options.get("fence"):
-                additional_costs += options["fence_length"] * COSTS["fence_cost_per_foot"]
-                additional_details["Fence"] = additional_costs
+                additional_costs["Fence"] = options["fence_length"] * COSTS["fence_cost_per_foot"]
 
     elif job_type == "Epoxy Flake":
         if options.get("over_quartz"):
